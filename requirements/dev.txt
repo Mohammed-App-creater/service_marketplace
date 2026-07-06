@@ -1,0 +1,12 @@
+-r base.txt
+
+pytest
+pytest-django
+pytest-xdist
+factory-boy
+model-bakery
+faker
+coverage
+ruff
+black
+django-debug-toolbar

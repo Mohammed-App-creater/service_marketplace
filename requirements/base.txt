@@ -1,0 +1,24 @@
+# Core
+Django>=5.0,<5.2
+djangorestframework
+djangorestframework-simplejwt
+psycopg[binary]
+
+# Security / auth
+argon2-cffi
+
+# Config
+django-environ
+
+# API tooling
+django-filter
+django-cors-headers
+drf-spectacular
+
+# Media / validation
+Pillow
+django-phonenumber-field[phonenumbers]
+
+# Async seam (eager in MVP)
+celery
+redis
