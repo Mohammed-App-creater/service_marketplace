@@ -14,6 +14,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, ["127.0.0.1", "localhost"]),
     CORS_ALLOWED_ORIGINS=(list, []),
+    CORS_ALLOW_ALL_ORIGINS=(bool, False),
     JWT_ACCESS_LIFETIME_MIN=(int, 60),
     JWT_REFRESH_LIFETIME_DAYS=(int, 7),
     OTP_TTL_SECONDS=(int, 300),
@@ -217,6 +218,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CORS
 # ---------------------------------------------------------------------------
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
+CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS")
 
 # ---------------------------------------------------------------------------
 # Celery (eager async seam in MVP)

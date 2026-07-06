@@ -16,7 +16,9 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: service-marketplace-api.onrender.com
+        value: "*"
+      - key: CORS_ALLOW_ALL_ORIGINS
+        value: "True"
       - key: DATABASE_URL
         fromDatabase:
           name: service-marketplace-db
