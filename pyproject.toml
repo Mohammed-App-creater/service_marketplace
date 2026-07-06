@@ -1,3 +1,10 @@
+# Tool configuration only — dependencies are managed with pip (requirements/).
+# The [project] block exists so build tools that parse this file don't error.
+[project]
+name = "service-marketplace-backend"
+version = "1.0.0"
+requires-python = ">=3.13,<3.14"
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["test_*.py", "tests.py"]
