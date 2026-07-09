@@ -19,6 +19,7 @@ env = environ.Env(
     JWT_REFRESH_LIFETIME_DAYS=(int, 7),
     OTP_TTL_SECONDS=(int, 300),
     OTP_MAX_ATTEMPTS=(int, 5),
+    AUTO_VERIFY_NEW_ACCOUNTS=(bool, False),
     DEFAULT_LANGUAGE=(str, "en"),
     CELERY_TASK_ALWAYS_EAGER=(bool, True),
     CELERY_BROKER_URL=(str, "redis://127.0.0.1:6379/0"),
@@ -241,9 +242,30 @@ EMAIL_PROVIDER = env("EMAIL_PROVIDER")
 # ---------------------------------------------------------------------------
 OTP_TTL_SECONDS = env("OTP_TTL_SECONDS")
 OTP_MAX_ATTEMPTS = env("OTP_MAX_ATTEMPTS")
+# Dev/testing convenience: skip OTP — accounts are active immediately after
+# registration. MUST be False for real launch (FR-102).
+AUTO_VERIFY_NEW_ACCOUNTS = env("AUTO_VERIFY_NEW_ACCOUNTS")
 BOOKING_MIN_LEAD_MINUTES = env("BOOKING_MIN_LEAD_MINUTES")
 BOOKING_SLOT_GRANULARITY_MINUTES = env("BOOKING_SLOT_GRANULARITY_MINUTES")
 # Platform service fee applied on top of the services subtotal (Decimal-parsed string).
 BOOKING_SERVICE_FEE_PERCENT = env("BOOKING_SERVICE_FEE_PERCENT")
 
 PHONENUMBER_DEFAULT_REGION = "ET"
+
+# ---------------------------------------------------------------------------
+# Logging — make app logs (incl. [STUB SMS]/[STUB EMAIL] OTP codes) visible.
+# ---------------------------------------------------------------------------
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {"format": "{levelname} {asctime} {name} {message}", "style": "{"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "simple"},
+    },
+    "loggers": {
+        "apps": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        "django": {"handlers": ["console"], "level": "INFO", "propagate": False},
+    },
+}

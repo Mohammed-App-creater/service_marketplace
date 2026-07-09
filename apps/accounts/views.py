@@ -33,7 +33,11 @@ class RegisterView(generics.CreateAPIView):
     throttle_scope = "auth"
 
     def perform_create(self, serializer):
+        from django.conf import settings
+
         user = serializer.save()
+        if settings.AUTO_VERIFY_NEW_ACCOUNTS:
+            return  # already active — no verification round-trip needed
         purpose = OTPPurpose.PHONE_VERIFY if user.phone else OTPPurpose.EMAIL_VERIFY
         otp_service.issue_otp(user, purpose)
 

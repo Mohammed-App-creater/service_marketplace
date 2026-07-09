@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import UserManager
+from .validators import validate_ethiopian_phone
 
 
 class Role(models.TextChoices):
@@ -29,7 +30,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(_("email address"), unique=True, null=True, blank=True)
-    phone = PhoneNumberField(_("phone number"), unique=True, null=True, blank=True)
+    phone = PhoneNumberField(
+        _("phone number"),
+        unique=True,
+        null=True,
+        blank=True,
+        validators=[validate_ethiopian_phone],
+    )
     full_name = models.CharField(_("full name"), max_length=150, blank=True)
     role = models.CharField(max_length=16, choices=Role.choices, default=Role.CUSTOMER)
 

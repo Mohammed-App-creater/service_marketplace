@@ -39,8 +39,27 @@ class UserManager(BaseUserManager):
         return self._create_user(email=email, phone=phone, password=password, **extra)
 
     def get_by_identifier(self, identifier):
-        """Return the user matching an email or phone identifier, or None."""
+        """Return the user matching an email or phone identifier, or None.
+
+        Phone input is normalized to E.164 (e.g. 0911… → +251911…) so users can
+        log in with the same local format they typed at registration.
+        """
         if not identifier:
             return None
-        lookup = {"email__iexact": identifier} if "@" in identifier else {"phone": identifier}
-        return self.filter(**lookup).first()
+        identifier = identifier.strip()
+        if "@" in identifier:
+            return self.filter(email__iexact=identifier).first()
+
+        import phonenumbers
+        from django.conf import settings
+
+        try:
+            parsed = phonenumbers.parse(identifier, settings.PHONENUMBER_DEFAULT_REGION)
+            if phonenumbers.is_valid_number(parsed):
+                e164 = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
+                user = self.filter(phone=e164).first()
+                if user is not None:
+                    return user
+        except phonenumbers.NumberParseException:
+            pass
+        return self.filter(phone=identifier).first()

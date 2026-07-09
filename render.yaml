@@ -3,8 +3,7 @@ services:
     name: service-marketplace-api
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements/prod.txt && python manage.py collectstatic --no-input
-    preDeployCommand: python manage.py migrate --no-input
+    buildCommand: pip install -r requirements/prod.txt && python manage.py collectstatic --no-input && python manage.py migrate --no-input
     startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 4
     envVars:
       - key: PYTHON_VERSION
@@ -18,6 +17,8 @@ services:
       - key: ALLOWED_HOSTS
         value: "*"
       - key: CORS_ALLOW_ALL_ORIGINS
+        value: "True"
+      - key: AUTO_VERIFY_NEW_ACCOUNTS
         value: "True"
       - key: DATABASE_URL
         fromDatabase:

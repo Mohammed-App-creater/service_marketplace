@@ -1,5 +1,7 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.views import exception_handler
 
 
@@ -21,6 +23,12 @@ class DomainError(APIException):
 
 def api_exception_handler(exc, context):
     """Wrap DRF's handler to guarantee a consistent error envelope."""
+    # Model-level validation (e.g. full_clean in managers) raises Django's
+    # ValidationError, which DRF would otherwise surface as a 500.
+    if isinstance(exc, DjangoValidationError):
+        detail = getattr(exc, "message_dict", None) or exc.messages
+        exc = DRFValidationError(detail)
+
     response = exception_handler(exc, context)
     if response is not None:
         detail = response.data
